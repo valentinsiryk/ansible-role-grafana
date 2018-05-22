@@ -1,0 +1,17 @@
+---
+- hosts: all
+
+  vars:
+    grafana_enable_ssl: false
+
+  pre_tasks:
+    - name: Update apt cache.
+      apt: update_cache=yes cache_valid_time=600
+      when: ansible_os_family == 'Debian'
+      changed_when: false
+
+    - name: Install dependencies.
+      package: name=curl state=present
+
+  roles:
+    - {role: ../ansible-role-grafana}

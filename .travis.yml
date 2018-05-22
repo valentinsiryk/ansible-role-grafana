@@ -1,0 +1,31 @@
+---
+env:
+  - distribution: ubuntu
+    version: xenial
+  - ANSIBLE_VERSION=2.4.0
+
+dist: xenial
+
+branches:
+  only:
+    - master
+
+sudo: enabled
+
+language: python
+python: "2.7"
+
+services:
+  - docker
+
+before_install:
+  - sudo curl -L https://github.com/docker/compose/releases/download/1.17.0/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+  - sudo chmod +x /usr/local/bin/docker-compose
+
+install:
+  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install ansible==$ANSIBLE_VERSION; fi
+
+script:
+  - ansible-playbook -i tests/inventory.ini tests/test.yml --syntax-check
+  - ansible-playbook -i tests/inventory.ini tests/test.yml -vvvv
+
