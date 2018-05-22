@@ -2,7 +2,6 @@
 - hosts: all
 
   vars:
-    grafana_enable_ssl: false
     project_dir: /tmp
 
   pre_tasks:
@@ -15,4 +14,4 @@
       package: name=curl state=present
 
   roles:
-    - {role: ../ansible-role-grafana}
+    - role_under_test
