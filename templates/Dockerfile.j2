@@ -2,12 +2,13 @@ FROM grafana/grafana:{{ grafana_version }}
 
 MAINTAINER Valentin Siryk <valentinsiryk@gmail.com>
 
-
+{% if grafana_enable_provision %}
 COPY {{ grafana_host_provisioning_dir_name }} {{ grafana_image_provisioning_dir }}
+{% endif %}
 
-
+{% if grafana_enable_ssl %}
 COPY {{ grafana_host_ssl_dir_name }} {{ grafana_image_ssl_dir }}
-
+{% endif %}
 
 # RUN grafana-cli plugins install raintank-worldping-app 1.2.3
 

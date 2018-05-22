@@ -38,8 +38,8 @@ grafana_image_provisioning_dashboards_dir: "{{ grafana_image_provisioning_dir }}
 
 
 ## Logging (custom logging driver/address)
-grafana_logging_driver:
-grafana_logging_address:
+#grafana_logging_driver:
+#grafana_logging_address:
 
 ## Limits
 grafana_mem_limit: 512M
@@ -53,7 +53,7 @@ grafana_cert_key: "{{ grafana_image_ssl_dir }}/grafana.key"
 
 ## For alerts
 grafana_smtp_enabled: "false"
-grafana_smtp_host: "{{ service_smtp_name }}:25"
+grafana_smtp_host: "smtp:25"
 grafana_smtp_skip_verify: "true"
 
 

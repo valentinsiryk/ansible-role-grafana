@@ -30,16 +30,14 @@ services:
       - {{ grafana_host_dashboards_dir }}:{{ grafana_image_dashboards_dir }}
       - {{ grafana_volume_name }}:/var/lib/grafana
     mem_limit: {{ grafana_mem_limit }}
-    ports: grafana_ports
-
+    ports:
+      - "{{ grafana_ports }}"
 
 volumes:
   {{ grafana_volume_name }}:
     driver: local
 
-
-networks:
-  default:
-    external:
-      name: {{ external_docker_net }}
-
+#networks:
+#  default:
+#    external:
+#      name: existed_network
