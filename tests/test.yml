@@ -3,6 +3,7 @@
 
   vars:
     grafana_enable_ssl: false
+    project_dir: /tmp
 
   pre_tasks:
     - name: Update apt cache.
