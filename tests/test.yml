@@ -5,4 +5,4 @@
     project_dir: /tmp
 
   roles:
-    - role_under_test
+    - {role: .}
