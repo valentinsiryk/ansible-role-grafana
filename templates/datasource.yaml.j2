@@ -1,0 +1,52 @@
+# config file version
+apiVersion: 1
+
+# list of datasources that should be deleted from the database
+#deleteDatasources:
+#  - name: Graphite
+#    orgId: 1
+
+# list of datasources to insert/update depending
+# whats available in the database
+datasources:
+- name: Elasticsearch                    # <string, required> name of the datasource. Required
+  type: elasticsearch               # <string, required> datasource type. Required
+  access: proxy                     # <string, required> access mode. direct or proxy. Required
+  orgId: 1                          # <int> org id. will default to orgId 1 if not specified
+  url: {{ grafana_datasource_elasticsearch_url }} # <string> url
+  password:                         # <string> database password, if used
+  user:                             # <string> database user, if used
+  database: "*"                     # <string> database name, if used
+  basicAuth:                        # <bool> enable/disable basic auth
+  basicAuthUser:                    # <string> basic auth username
+  basicAuthPassword:                # <string> basic auth password
+  withCredentials:                  # <bool> enable/disable with credentials headers
+  isDefault: true                   # <bool> mark as default datasource. Max one per org
+  jsonData:                         # <map> fields that will be converted to json and stored in json_data
+     esVersion: 56
+     timeField: "@timestamp"
+     tlsSkipVerify: true
+  secureJsonData:                   # <string> json object of data that will be encrypted.
+  version: 1
+  editable: true                    # <bool> allow users to edit datasources from the UI.
+
+- name: Prometheus
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: {{ grafana_datasource_prometheus_url }}
+  password:                         
+  user:                             
+  database:                     
+  basicAuth:                      
+  basicAuthUser:                   
+  basicAuthPassword:      
+  withCredentials:            
+  isDefault:             
+  jsonData:                      
+     timeInterval: 10s
+     tlsAuth: false
+     tlsAuthWithCACert: false
+  secureJsonData:                   
+  version: 1
+  editable: true                    

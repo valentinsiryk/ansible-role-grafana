@@ -1,0 +1,45 @@
+version: '2.1'
+services:
+  {{ grafana_container_name }}:
+    build:
+      context: .
+    image: {{ grafana_image_name }}
+    container_name: {{ grafana_container_name }}
+    restart: unless-stopped
+    environment:
+      - "GF_SECURITY_ADMIN_PASSWORD={{ grafana_security_admin_password }}"
+      - "GF_PATHS_PROVISIONING={{ grafana_image_provisioning_dir }}"
+      - "GF_AUTH_BASIC_ENABLED=false"
+      - "GF_SERVER_HTTP_ADDR={{ grafana_listen_ip }}"
+      - "GF_SERVER_HTTP_PORT={{ grafana_listen_port }}"
+      - "GF_SERVER_PROTOCOL={{ grafana_protocol }}"
+      - "GF_SERVER_CERT_FILE={{ grafana_cert_file }}"
+      - "GF_SERVER_CERT_KEY={{ grafana_cert_key }}"
+      - "GF_SMTP_ENABLED={{ grafana_smtp_enabled }}"
+      - "GF_SMTP_HOST={{ grafana_smtp_host }}"
+      - "GF_SMTP_SKIP_VERIFY={{ grafana_smtp_skip_verify }}"
+      - "GF_DASHBOARDS_VERSIONS_TO_KEEP={{ grafana_dashboards_versions_to_keep }}"
+{% if grafana_logging_driver is defined %}
+    logging:
+      driver: {{ grafana_logging_driver }}
+      options:
+        {{ grafana_logging_driver }}-address: {{ grafana_logging_address }}
+        tag: {{ grafana_container_name }}
+{% endif %}
+    volumes:
+      - {{ grafana_host_dashboards_dir }}:{{ grafana_image_dashboards_dir }}
+      - {{ grafana_volume_name }}:/var/lib/grafana
+    mem_limit: {{ grafana_mem_limit }}
+    ports: grafana_ports
+
+
+volumes:
+  {{ grafana_volume_name }}:
+    driver: local
+
+
+networks:
+  default:
+    external:
+      name: {{ external_docker_net }}
+

@@ -1,0 +1,69 @@
+---
+
+project_dir: /opt
+grafana_version: '5.0.4'
+
+grafana_container_name: grafana
+grafana_dir: "{{ project_dir }}/{{ grafana_container_name }}"
+grafana_image_name: "valentinsiryk/grafana:{{ grafana_version }}"
+
+grafana_enable_ssl: false           # SSL for WEB UI
+grafana_protocol: "http"
+
+grafana_enable_provision: false     # provisioning of datasources/dashboards
+
+grafana_host_ssl_dir_name: "ssl"
+grafana_host_ssl_dir: "{{ grafana_dir }}/{{ grafana_host_ssl_dir_name }}"
+grafana_image_ssl_dir: "/opt/grafana/ssl"
+
+grafana_security_admin_password: secret # password for 'admin' user (change it)
+
+grafana_dashboards_versions_to_keep: 1  # min 1
+
+## Provisioning
+
+grafana_image_dashboards_dir: "/opt/grafana/dashboards"
+grafana_host_dashboards_dir_name: "dashboards"
+grafana_host_dashboards_dir: "{{ grafana_dir }}/{{ grafana_host_dashboards_dir_name }}"
+
+
+grafana_host_provisioning_dir_name: "provisioning"
+grafana_host_provisioning_dir: "{{ grafana_dir }}/{{ grafana_host_provisioning_dir_name }}"
+grafana_host_provisioning_dashboards_dir: "{{ grafana_host_provisioning_dir }}/dashboards"
+grafana_host_provisioning_datasources_dir: "{{ grafana_host_provisioning_dir }}/datasources"
+
+grafana_host_datasources_dir: "{{ grafana_host_provisioning_dir }}/datasources"
+grafana_image_provisioning_dir: "/opt/grafana/provisioning"
+grafana_image_provisioning_dashboards_dir: "{{ grafana_image_provisioning_dir }}/dashboards"
+
+
+## Logging (custom logging driver/address)
+grafana_logging_driver:
+grafana_logging_address:
+
+## Limits
+grafana_mem_limit: 512M
+
+grafana_listen_ip: 0.0.0.0
+grafana_listen_port: "3000"
+
+
+grafana_cert_file: "{{ grafana_image_ssl_dir }}/grafana.crt"
+grafana_cert_key: "{{ grafana_image_ssl_dir }}/grafana.key"
+
+## For alerts
+grafana_smtp_enabled: "false"
+grafana_smtp_host: "{{ service_smtp_name }}:25"
+grafana_smtp_skip_verify: "true"
+
+
+grafana_port_internal: "{{ grafana_listen_port }}"
+grafana_port_external: "{{ grafana_port_internal }}"
+grafana_ports: "{{ grafana_listen_ip }}:{{ grafana_port_external }}:{{ grafana_port_internal }}"
+
+# Datasource configuration
+grafana_datasource_elasticsearch_url: "http://elasticsearch:9200"
+grafana_datasource_prometheus_url: "http://prometheus:9090"
+
+grafana_volume_name: "{{ grafana_container_name }}"
+

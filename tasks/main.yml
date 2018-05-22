@@ -1,0 +1,106 @@
+---
+
+#
+# Docker-CE and Docker-compose should be installed
+#
+
+- name: Grafana | Make sure service directory exists at remote host
+  file:
+    path: "{{ grafana_dir }}"
+    state: directory
+    mode: 0755
+
+## SSL
+
+- name: Grafana | Make sure service SSL directory exists at remote host
+  file:
+    path: "{{ grafana_host_ssl_dir }}"
+    state: directory
+    mode: 0755
+  when: grafana_enable_ssl
+
+- name: Grafana | Copy SSL cert/key to remote host
+  copy:
+    src: "{{ item }}"
+    dest: "{{ grafana_host_ssl_dir }}/"
+    mode: 0644
+  with_items:
+    - ssl/grafana.crt
+    - ssl/grafana.key
+  when: grafana_enable_ssl
+
+## Provisioning
+
+- name: Grafana | Make sure provisioning directory exists at remote host
+  file:
+    path: "{{ grafana_host_provisioning_dir }}"
+    state: directory
+    mode: 0755
+  when: grafana_enable_provision
+
+- name: Grafana | Make sure provisioning dashboards/datasources directories exist at remote host
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ grafana_host_provisioning_dashboards_dir }}"
+    - "{{ grafana_host_provisioning_datasources_dir }}"
+  when: grafana_enable_provision
+
+- name: Grafana | Generate dashboards provision config from template
+  template:
+    src: dashboard.yaml.j2
+    dest: "{{ grafana_host_provisioning_dashboards_dir }}/dashboard.yaml"
+  when: grafana_enable_provision
+
+- name: Grafana | Generate datasource from template
+  template:
+    src: datasource.yaml.j2
+    dest: "{{ grafana_host_provisioning_datasources_dir }}/datasource.yaml"
+  when: grafana_enable_provision
+
+## Dashboard
+
+- name: Grafana | Make sure dashboards directory exists at remote host
+  file:
+    path: "{{ grafana_host_dashboards_dir }}"
+    state: directory
+    mode: 0755
+  when: grafana_enable_provision
+
+- name: Grafana | Copy dashboards to remote host
+  copy:
+    src: dashboards/
+    dest: "{{ grafana_host_dashboards_dir }}/"
+    mode: 0644
+  when: grafana_enable_provision
+
+## Docker
+
+- name: Grafana | Generate Dockerfile from template
+  template:
+    src: Dockerfile.j2
+    dest: "{{ grafana_dir }}/Dockerfile"
+
+- name: Grafana | Generate docker-compose file from template
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ grafana_dir }}/docker-compose.yml"
+    validate: docker-compose -f %s config
+
+- name: Grafana | Run service
+  shell: docker-compose up -d --build --remove-orphans
+  args:
+    chdir: "{{ grafana_dir }}"
+  register: up_result
+- debug: var=up_result.stdout_lines
+- debug: var=up_result.stderr.split('\n')
+
+- name: Grafana | Wait port to become open on the host
+  wait_for:
+    port: "{{ grafana_port_external }}"
+    delay: 5
+    timeout: 60
+  when: grafana_port_external is defined
+
