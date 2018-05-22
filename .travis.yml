@@ -1,14 +1,17 @@
 ---
 env:
-  - distribution: ubuntu
-    version: xenial
-    ANSIBLE_VERSION: '2.4'
-    DOCKER_COMPOSE_VERSION: '1.17.0'
+  - ANSIBLE_VERSION=2.4
+  - DOCKER_COMPOSE_VERSION=1.17.0
+  
 
 dist: xenial
 sudo: enabled
 language: python
 python: "2.7"
+
+#addons:
+#  apt:
+#    update: true
 
 branches:
   only:
